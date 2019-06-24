@@ -1,2 +1,2 @@
-# codestream-demo
-Code Stream Demo
+# Tango - Demo
+Repository with sample YAML files...

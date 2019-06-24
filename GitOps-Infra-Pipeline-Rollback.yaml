@@ -1,0 +1,27 @@
+---
+project: Rainpole Corp Communications
+kind: PIPELINE
+name: Rollback-pipeline
+enabled: false
+concurrency: 10
+ciWorkspace:
+  endpoint: ''
+  image: ''
+  registry: ''
+  path: ''
+  cache:
+  - ''
+stageOrder:
+- rollback
+stages:
+  rollback:
+    taskOrder:
+    - Task0
+    tasks:
+      Task0:
+        type: Blueprint
+        input:
+          _deploymentFlag: false
+          action: RollbackDeployment
+          deploymentName: Basic UC1
+          rollbackVersion: n-1

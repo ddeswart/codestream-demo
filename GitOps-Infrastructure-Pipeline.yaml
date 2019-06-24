@@ -1,0 +1,98 @@
+---
+project: Rainpole Corp Communications
+kind: PIPELINE
+name: Blueprint-Infrastructure-Pipeline
+enabled: false
+concurrency: 10
+
+stageOrder:
+- New Dev
+- Prod
+stages:
+  Prod:
+    taskOrder:
+    - Update prod deployment
+    - Test prod
+    - Approve for rollback
+    tasks:
+      Test prod:
+        type: REST
+        input:
+          headers: {
+            Accept: application/json,
+            Content-Type: application/json
+          }
+          action: get
+          url: http://${Prod.Update prod deployment.output.deploymentDetails.resources['frontend[0]'].address}
+      Approve for rollback:
+        type: UserOperation
+        input:
+          summary: approve for rollback
+          pipelineName: ${name}
+          expirationInDays: 3
+          approverGroups: [
+            ]
+          approvers: [
+            administrator@corp.local]
+          description: ''
+          sendemail: false
+      Update prod deployment:
+        type: Blueprint
+        endpoints:
+          gitServer: Gitlab
+        input:
+          _deploymentFlag: false
+          filepath: ' vRA8BetaUC1/blueprint.yaml'
+          action: UpdateDeployment
+          allowDestroy: true
+          deploymentName: Basic UC1
+          parameters: {
+            }
+  New Dev:
+    taskOrder:
+    - create new small deployment
+    - test deployment
+    - Approve
+    - Task0
+    tasks:
+      Delete New Dev Deployment:
+        type: Blueprint
+        input:
+          _deploymentFlag: false
+          action: DeleteDeployment
+          deploymentName: ${New Dev.create new small deployment.output.deploymentName}
+      create new small deployment:
+        type: Blueprint
+        endpoints:
+          gitServer: Gitlab
+        input:
+          filepath: ' vRA8BetaUC2/blueprint.yaml'
+          action: CreateDeployment
+          deploymentName: ''
+          parameters: {
+            }
+      test deployment:
+        type: REST
+        input:
+          headers: {
+            Accept: application/json,
+            Content-Type: application/json
+          }
+          action: get
+          url: http://${New Dev.create new small deployment.output.deploymentDetails.resources['frontend[0]'].address}
+      Approve:
+        type: UserOperation
+        input:
+          summary: please approve
+          pipelineName: ${name}
+          expirationInDays: 3
+          approverGroups: [
+            ]
+          approvers: [
+            administrator@corp.local]
+          description: ''
+          sendemail: false
+rollbacks:
+- name: Rollback-pipeline
+  stage: Prod
+  task: Approve for rollback

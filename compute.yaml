@@ -1,0 +1,12 @@
+inputs: {}
+resources:
+  bhawesh:
+    type: Cloud.Machine
+    properties:
+      image: ubuntu
+      flavor: micro
+  Cloud_Machine_1:
+    type: Cloud.Machine
+    properties:
+      image: ubuntu
+      flavor: micro
