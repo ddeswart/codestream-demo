@@ -1,2 +1,1 @@
-# Tango - Demo
-Repository with sample YAML files...
+# Code Stream - Demo
