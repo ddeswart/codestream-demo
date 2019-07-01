@@ -4,22 +4,7 @@ metadata:
   name: $${NAMESPACE}
   namespace: $${NAMESPACE}
 ---   
-apiVersion: v1
-kind: Service
-metadata:
-  name: $${NAMESPACE}
-  namespace: $${NAMESPACE}
-  labels:
-    app: codestream-demo
-spec:
-  ports:
-    - port: 80
-  selector:
-    app: codestream-demo
-    tier: frontend
-  type: LoadBalancer 
----
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: codestream-demo
@@ -30,18 +15,28 @@ spec:
   selector:
     matchLabels:
       app: codestream-demo
-      tier: frontend
-  strategy:
-    type: Recreate
+  replicas: 1
   template:
     metadata:
       labels:
         app: codestream-demo
-        tier: frontend
     spec:
       containers:
       - name: codestream-demo
         image: ddeswart/codestream-demo:$${NAMESPACE}-$${JOB_ID}
         ports:
         - containerPort: 80
-          name: codestream-demo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: codestream-demo
+  name: $${NAMESPACE}-svc
+  namespace: $${NAMESPACE}
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+  selector:
+    app: codestream-demo
