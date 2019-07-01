@@ -1,16 +1,16 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: codestream-demo
+  name: cs-demo-deployment
 spec:
   selector:
     matchLabels:
-      app: codestream-demo
+      app: codestream-demo:$${NAMESPACE}-$${JOB_ID}
   replicas: 1
   template:
     metadata:
       labels:
-        app: codestream-demo
+        app: codestream-demo:$${NAMESPACE}-$${JOB_ID}
     spec:
       containers:
       - name: codestream-demo
@@ -22,7 +22,7 @@ apiVersion: v1
 kind: Service
 metadata:
   labels:
-    app: codestream-demo
+    app: codestream-demo:$${NAMESPACE}-$${JOB_ID}
   name: codestream-demo-svc
   namespace: default
 spec:
@@ -30,4 +30,4 @@ spec:
   ports:
     - port: 80
   selector:
-    app: codestream-demo
+    app: codestream-demo:$${NAMESPACE}-$${JOB_ID}
