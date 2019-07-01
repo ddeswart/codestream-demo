@@ -1,15 +1,7 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: $${NAMESPACE}
----   
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
   name: codestream-demo
-  namespace: $${NAMESPACE}
-  labels:
-    app: codestream-demo
 spec:
   selector:
     matchLabels:
@@ -31,8 +23,8 @@ kind: Service
 metadata:
   labels:
     app: codestream-demo
-  name: $${NAMESPACE}-svc
-  namespace: $${NAMESPACE}
+  name: codestream-demo-svc
+  namespace: default
 spec:
   type: NodePort
   ports:
